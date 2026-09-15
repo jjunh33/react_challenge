@@ -1,0 +1,52 @@
+/* Session 1 - 4. Tailwind CSS v4로 스타일링하기
+   v4부터는 tailwind.config.js가 필요 없다. @import로 Tailwind를 불러오고,
+   @theme 블록 안에 Figma Dev Mode에서 뽑은 값을 "디자인 토큰"으로 등록한다.
+   한 번 등록해두면 이후엔 bg-primary, text-ink-secondary 처럼 어디서든
+   재사용할 수 있고, 값이 바뀌어도 이 블록 한 곳만 고치면 전체에 반영된다. */
+@import 'tailwindcss';
+
+@theme {
+  /* --- COLOR (Figma "DESIGN TOKENS > COLOR" 그대로) --- */
+  --color-primary: #4c6ef5;
+  --color-primary-bg: #eef1ff;
+  --color-primary-border: #c9d4fc;
+  --color-like: #f2405d;
+  --color-like-bg: #fff1f3;
+  --color-like-border: #ffd9df;
+
+  /* color/text 계열은 Tailwind의 font-size 유틸(text-sm 등)과 이름이 겹치지 않도록
+     ink 라는 이름으로 등록했다. */
+  --color-ink: #14161a;
+  --color-ink-body: #4a5058;
+  --color-ink-secondary: #8a9099;
+  --color-ink-muted: #6b7280;
+
+  --color-border: #e8eaee;
+  --color-surface: #ffffff;
+  --color-bg: #f7f8fa;
+  --color-chip-bg: #f1f3f6;
+
+  /* --- RADIUS (Figma "DESIGN TOKENS > SPACING·RADIUS") ---
+     radius/sm(8), radius/full(999)은 Tailwind 기본값(rounded-lg, rounded-full)과
+     이미 같아서 별도 등록이 필요 없고, 기본값에 없는 값만 토큰으로 추가한다. */
+  --radius-card: 16px;
+  --radius-frame: 20px;
+
+  /* --- TYPE ---
+     spacing(4/8/12/16...)은 Tailwind 기본 스케일과 이미 1:1로 맞아떨어져서
+     (space-1=4px, space-2=8px, space-3=12px ...) 별도 토큰 없이 p-4, gap-3 처럼
+     기본 유틸리티를 그대로 쓴다. */
+  --font-sans:
+    'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+}
+
+button {
+  cursor: pointer;
+}
