@@ -1,14 +1,11 @@
 # react_study-client-web
 
-React 4주 챌린지 1주차 제출물입니다. 제공된 Figma 시안(커뮤니티 피드 - 목록/상세)을
-Vite + React + TypeScript + Tailwind CSS v4로 그대로 정적 퍼블리싱했습니다.
+React 4주 챌린지 3주차 제출물입니다. 2주차 mock 데이터를 실제 서버(`react_study-server`)
+API로 교체해서, 새로고침해도 좋아요/북마크/댓글이 유지되는 진짜 앱으로 완성했습니다.
 
 ## 스택
 
-- Vite + React + **TypeScript** (`react-ts` 템플릿)
-- **Tailwind CSS v4** - `tailwind.config.js` 없이 [src/index.css](src/index.css)의 `@theme`
-  블록에 Figma Dev Mode에서 뽑은 디자인 토큰(색상/타이포/라운드)을 등록해서 사용
-- ESLint + Prettier (`eslint-config-prettier`로 역할 분리)
+2주차와 동일 + **`fetch` + `useEffect` 기반 API 연동**, `.env`로 서버 주소 관리
 
 ## 실행 방법
 
@@ -17,21 +14,34 @@ npm install
 npm run dev
 ```
 
+백엔드(`react_study-server`)를 먼저 켜둬야 목록/상세 화면이 정상적으로 뜹니다.
+API 주소는 `.env.local`의 `VITE_API_BASE_URL`로 설정합니다 (기본값 `http://localhost:8080`).
+
+```bash
+npm run lint    # ESLint
+npm run build   # tsc -b && vite build
+```
+
 ## 이번 주 범위
 
-**필수 과제**: 인터랙션 없이 마크업 + 스타일만 (버튼 클릭, 댓글 입력 등 전부 비활성).
-**심화 과제**: 의미 단위 컴포넌트(`FeedHeader`, `PostCard`, `BookmarkButton`,
-`CommentSection`)로 미리 쪼개서 구현 + `@theme`에 디자인 토큰 등록.
-
-State/이벤트/라우팅은 다음 주(2주차) 범위라 아직 없습니다 - `useState`, `onClick`,
-`react-router-dom` 전부 이 브랜치에는 없고, 두 화면(목록/상세)을 한 페이지에 나란히
-정적으로 렌더링합니다.
+**필수 과제**: 공개 API(여기서는 `react_study-server`)를 연동해 리스트 + 상세 페이지 구성,
+로딩/에러 상태 표시.
 
 | 파일 | 역할 |
 |---|---|
-| [src/App.tsx](src/App.tsx) | Feed/List, Post/Detail 두 화면을 나란히 렌더링 |
-| [src/components/FeedHeader.tsx](src/components/FeedHeader.tsx) | 제목 + 검색 + 글쓰기 + 카테고리 칩 (전부 정적) |
-| [src/components/PostCard.tsx](src/components/PostCard.tsx) | 게시글 카드 |
-| [src/components/BookmarkButton.tsx](src/components/BookmarkButton.tsx) | 북마크 아이콘 (Figma Variant 그대로) |
-| [src/components/CommentSection.tsx](src/components/CommentSection.tsx) | 댓글 입력창 + 목록 (정적) |
-| [src/data.ts](src/data.ts) | Figma 시안 값을 그대로 옮긴 상수 데이터 |
+| [src/api/client.ts](src/api/client.ts) | 5개 API 함수 모음 (목록/상세/좋아요/댓글/북마크) |
+| [src/api/clientId.ts](src/api/clientId.ts) | 로그인 없이 브라우저를 구분하기 위한 익명 ID |
+| [src/pages/PostList.tsx](src/pages/PostList.tsx) | `useEffect` + `fetch`로 목록 조회, 로딩/에러 상태 |
+| [src/pages/PostDetail.tsx](src/pages/PostDetail.tsx) | `useEffect` + `fetch`로 상세 조회, 댓글 State 끌어올리기 |
+| [src/components/CommentSection.tsx](src/components/CommentSection.tsx) | 댓글 목록을 Props로 받는 순수 컴포넌트로 전환 (2주차의 "알려진 한계" 해결) |
+
+## 2주차 대비 달라진 점
+
+- `src/data/posts.ts` mock 배열 삭제 → 전부 서버 API 응답으로 대체
+- `PostCard`/`PostDetail`이 자기 `useState`로 좋아요/북마크를 관리하던 것 → 서버가
+  내려준 값을 Props로만 그리고, 클릭 시 API를 호출해 갱신 (State 끌어올리기)
+- `CommentSection`이 댓글 목록까지 자기 State로 갖던 것 → 목록은 `PostDetail`이 소유,
+  입력창 값만 여전히 자기 State(Controlled Component)로 남김 - 2주차 README에 적어둔
+  "알려진 한계"가 여기서 해결됨
+- 댓글 작성자 이름: 서버가 `X-Client-Id`로 매번 같은 익명 닉네임(예: "용감한 사자")을
+  계산해서 내려주고, 그 clientId가 내 것과 같으면 프론트에서 "나"로 바꿔 보여줌
